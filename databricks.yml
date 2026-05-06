@@ -1,75 +1,26 @@
 bundle:
   name: medallion_framework
 
+# 1. Define variables at the top level to fix the "not defined" error
+variables:
+  catalog:
+    description: "Target catalog"
+    default: "contract"
+  schema:
+    description: "Target schema"
+    default: "raw_data"
 
+# 2. Syncing local folders is handled automatically by DABs
+# based on the workspace root_path below.
 workspace:
-  root_path: /Workspace/Users/${workspace.current_user.userName}/.bundle/${bundle.name}/${bundle.target}
+
+  root_path: /Workspace/Users/emailisbena@gmail.com/.bundle/${bundle.name}/${bundle.target}
 
 include:
   - resources/*.yml
-# Automatically uploads your contract and code to the workspace
-artifacts:
-  framework_files:
-    src: ./contracts
-    dest: /Volumes/contract/raw_data/datacontract/orders-contract.yml
-  notebooks:
-    src: ./src/contract
-    dest: /Workspace/Users/emailisbena@gmail.com/contract_demo/medallian_task
 
-resources:
-  jobs:
-    medallion_ingestion_pipeline:
-      name: "Medallion_Ingestion_Pipeline"
-
-      # Shared cluster configuration for all tasks to save on spin-up time
-
-
-tasks:
-        # --- Task 1: Customers ---
-        - task_key: "ingest_customers"
-          job_cluster_key: "ingestion_cluster"
-          notebook_task:
-            notebook_path: "/Workspace/Users/emailisbena@gmail.com/contract_demo/medallian_task"
-            base_parameters:
-              source_path: "/Volumes/contract/raw_data/ingest_data/cus_ord_sales/customers (1).csv"
-              contract_path: "/Volumes/contract/raw_data/datacontract/orders-contract.yml"
-              bronze_table: "contract.raw_data.bronze_customer"
-              silver_table: "contract.raw_data.silver_customer"
-              merge_key: "customer_id"
-
-        # --- Task 2: Orders ---
-        - task_key: "ingest_orders"
-          depends_on:
-            - task_key: "ingest_customers" # Optional: Runs after customers pass
-          job_cluster_key: "ingestion_cluster"
-          notebook_task:
-            notebook_path: "/Workspace/Users/emailisbena@gmail.com/contract_demo/medallian_task"
-            base_parameters:
-              source_path: "/Volumes/contract/raw_data/ingest_data/cus_ord_sales/orders (1).csv"
-              contract_path: "/Volumes/contract/raw_data/datacontract/orders-contract.yml"
-              bronze_table: "contract.raw_data.bronze_orders"
-              silver_table: "contract.raw_data.silver_orders"
-              merge_key: "order_id"
-
-        # --- Task 3: Sales ---
-        - task_key: "ingest_sales"
-          depends_on:
-            - task_key: "ingest_orders" # Optional: Runs after orders pass
-          job_cluster_key: "ingestion_cluster"
-          notebook_task:
-            notebook_path: "/Workspace/Users/emailisbena@gmail.com/contract_demo/medallian_task"
-            base_parameters:
-              source_path: "/Volumes/contract/raw_data/ingest_data/cus_ord_sales/sales (1).csv"
-              contract_path: "/Volumes/contract/raw_data/datacontract/orders-contract.yml"
-              bronze_table: "contract.raw_data.bronze_sales"
-              silver_table: "contract.raw_data.silver_sales"
-              merge_key: "sale_id"
 targets:
   lab:
-    # The default target uses 'mode: development' to create a development copy.
-    # - Deployed resources get prefixed with '[dev my_user_name]'
-    # - Any job schedules and triggers are paused by default.
-    # See also https://docs.databricks.com/dev-tools/bundles/deployment-modes.html.
     mode: development
     default: true
     variables:
