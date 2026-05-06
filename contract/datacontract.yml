@@ -1,0 +1,39 @@
+# contract/datacontracts.yml
+id: urn:orders-contract
+version: 1.0.0
+name: demo
+description: "Data contract for the orders table"
+
+contracts:
+  - dataset: customers_gate
+    columns:
+      - name: customer_id
+        checks:
+          - missing_count = 0
+          - duplicate_count = 0
+      - name: email
+        checks:
+          - invalid_count = 0:
+              valid_format: email
+
+  - dataset: orders_gate
+    columns:
+      - name: order_id
+        checks:
+          - missing_count = 0
+      - name: status
+        checks:
+          - invalid_count = 0:
+              valid_values: [Shipped, Processing, Delivered, Cancelled]
+
+  - dataset: sales_gate
+    columns:
+      - name: sale_id
+        checks:
+          - duplicate_count = 0
+      - name: total_amount
+        checks:
+          - missing_count = 0
+
+
+

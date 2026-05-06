@@ -1,0 +1,15 @@
+resources:
+  pipelines:
+    contract:
+      name: ${bundle.target}_contract
+      libraries:
+        - glob:
+            # This ensures all notebooks/files in src are included
+            include: ../src/contract/**
+            # Or use notebooks if that's what you're using:
+            # include: "../src/*.ipynb"
+      catalog: contract
+      target: raw_data # This is the DLT 'schema' setting
+      photon: true
+      serverless: true
+      root_path: ../src/contract
