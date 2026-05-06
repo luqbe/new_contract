@@ -16,8 +16,8 @@ jobs:
       - uses: actions/checkout@v4
 
       # 1. Validate Soda Contract YAML
-      - name: Install Soda
-        run: pip install soda-core-contracts
+      - name: Install Soda Core Spark
+        run: pip install soda-core-spark
 
       - name: Check Contract Syntax
         run: soda contract validate --contract contract/datacontracts.yml
