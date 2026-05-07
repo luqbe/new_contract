@@ -20,7 +20,7 @@ jobs:
         run: pip install soda-core-spark
 
       - name: Check Contract Syntax
-        run: soda contract validate --contract contract/datacontracts.yml
+        run: soda contract validate --contract contract/**
 
       # 2. Validate Databricks Asset Bundle (Dry Run)
       - name: Setup Databricks CLI
