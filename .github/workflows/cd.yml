@@ -1,13 +1,14 @@
-name: "CD: Deploy to Databricks"
-
+name: Databricks DAB Deploy
 on:
   pull_request:
+    types: [closed]
     branches: [main]
     paths:
       - 'contract/**'           # Triggers when datacontract.yml changes
       - 'databricks.yml'        # Triggers when bundle config changes
       - 'src/**'                # Triggers when python scripts change
       - 'resources/**'          # Triggers when job definitions change
+  workflow_dispatch:
 
 jobs:
   CD:
