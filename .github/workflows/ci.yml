@@ -38,6 +38,6 @@ jobs:
       # This ensures your databricks.yml and resource files are correctly structured
       - name: Bundle Validate
         env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: databricks bundle validate -t lab
