@@ -28,6 +28,6 @@ jobs:
         env:
           DATABRICKS_HOST: ${{ vars.DATABRICKS_HOST }}
           DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-        run:
+        run: |
            databricks bundle validate -t lab
            databricks bundle deploy -t lab --force
