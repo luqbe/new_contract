@@ -1,0 +1,6 @@
+# SodaCL for Customers
+checks for customers_gate:
+  - missing_count(customer_id) = 0
+  - duplicate_count(customer_id) = 0
+  - invalid_count(email) = 0:
+      valid format: email

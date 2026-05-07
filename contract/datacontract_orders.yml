@@ -1,0 +1,5 @@
+# SodaCL for Orders
+checks for orders_gate:
+  - missing_count(order_id) = 0
+  - invalid_count(status) = 0:
+      valid values: [Shipped, Processing, Delivered, Cancelled]

@@ -1,0 +1,32 @@
+name: "CD: Deploy to Databricks"
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'contract/**'           # Triggers when datacontract.yml changes
+      - 'databricks.yml'        # Triggers when bundle config changes
+      - 'src/**'                # Triggers when python scripts change
+      - 'resources/**'          # Triggers when job definitions change
+
+jobs:
+  CD:
+    name: Databricks DAB Deploy
+    if: github.event.pull_request.merged == true || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    environment: lab
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+        with:
+          version: 0.299.0
+
+      - name: Bundle Deploy
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        run:
+           databricks bundle validate -t lab
+           databricks bundle deploy -t lab --force

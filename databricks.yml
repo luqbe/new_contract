@@ -1,0 +1,28 @@
+bundle:
+  name: medallion_framework
+
+# 1. Define variables at the top level to fix the "not defined" error
+variables:
+  catalog:
+    description: "Target catalog"
+    default: "contract"
+  schema:
+    description: "Target schema"
+    default: "raw_data"
+
+# 2. Syncing local folders is handled automatically by DABs
+# based on the workspace root_path below.
+workspace:
+
+  root_path: /Workspace/Users/emailisbena@gmail.com/.bundle/${bundle.name}/${bundle.target}
+
+include:
+  - resources/*.yml
+
+targets:
+  lab:
+    mode: development
+    default: true
+    variables:
+      catalog: contract
+      schema: raw_data

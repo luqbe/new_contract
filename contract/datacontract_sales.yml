@@ -1,0 +1,4 @@
+# SodaCL for Sales
+checks for sales_gate:
+  - duplicate_count(sale_id) = 0
+  - missing_count(total_amount) = 0
