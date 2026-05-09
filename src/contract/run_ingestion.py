@@ -2,7 +2,7 @@
 #dbutils.library.restartPython()
 
 
-#%run /Users/emailisbena@gmail.com/contract_demo/common_utils
+#%run /Users/*******@gmail.com/contract_demo/common_utils
 
 
 
