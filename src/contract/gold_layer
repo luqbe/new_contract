@@ -1,0 +1,62 @@
+from pyspark.sql import SparkSession
+from pyspark.sql.functions import col, current_timestamp
+
+def create_gold_layer(spark, s_cust, s_ord, s_sale, gold_t):
+    """
+    Standalone transformation logic to create the Gold layer.
+    Joins Silver Customers, Orders, and Sales.
+    """
+    # 1. Load Silver tables into DataFrames
+    df_cust = spark.table(s_cust)
+    df_ord  = spark.table(s_ord)
+    df_sale = spark.table(s_sale) 
+
+    # 2. Join Logic & Feature Selection
+    df_gold = df_sale.join(df_ord, "order_id", "inner") \
+                     .join(df_cust, "customer_id", "inner") \
+                     .select(
+                         "sale_id", 
+                         "order_id", 
+                         "customer_id", 
+                         col("name").alias("customer_name"),  # ← Changed from "customer_name" to col("name").alias("customer_name")
+                         "email", 
+                         "total_amount",
+                         col("status").alias("order_status"),
+                         current_timestamp().alias("gold_processed_at")
+                     )
+    
+    # 3. Write/Overwrite the Gold Table
+    df_gold.write.format("delta").mode("overwrite").saveAsTable(gold_t)
+
+def run_gold_pipeline():
+    spark = SparkSession.builder.getOrCreate()
+    
+    # Set Unity Catalog context
+    spark.sql("USE CATALOG contract")
+    spark.sql("USE SCHEMA raw_data")
+    
+    # Define table paths
+    silver_customer = "contract.raw_data.silver_customer"
+    silver_orders   = "contract.raw_data.silver_orders"
+    silver_sales    = "contract.raw_data.silver_sales"
+    gold_table      = "contract.raw_data.gold_sales_overview"
+
+    try:
+        print(f"Refreshing Gold Layer: {gold_table}")
+        
+        create_gold_layer(
+            spark, 
+            s_cust = silver_customer, 
+            s_ord  = silver_orders, 
+            s_sale = silver_sales, 
+            gold_t = gold_table
+        )
+        
+        print(f"Success! Gold table updated with {spark.table(gold_table).count()} rows.")
+        
+    except Exception as e:
+        print(f"Error creating Gold layer: {str(e)}")
+        raise e
+
+if __name__ == "__main__":
+    run_gold_pipeline()
